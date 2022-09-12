@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Unity WebGL Player | Boat Ride</title>
+</head>
+
+<body style="text-align: center">
+  <canvas id="unity-canvas" style="width: 960px; height: 600px; background: #231F20"></canvas>
+  <script src="Build/web1.loader.js"></script>
+  <script>
+    var gameIns = null;
+    createUnityInstance(document.querySelector("#unity-canvas"), {
+      dataUrl: "Build/web1.data",
+      frameworkUrl: "Build/web1.framework.js",
+      codeUrl: "Build/web1.wasm",
+      streamingAssetsUrl: "StreamingAssets",
+      companyName: "DefaultCompany",
+      productName: "Boat Ride",
+      productVersion: "0.1",
+
+    }).then((e) => {
+      gameIns = e;
+      gamerun()
+    });
+
+    function gamerun() {
+      console.log("加载完成")
+    }
+
+    function startgame() {
+      gameIns.SendMessage("GameController", "StartTheGame")
+    }
+
+    function restartgame() {
+      gameIns.SendMessage("GameController", "Restart")
+    }
+
+    var ishmove = false
+    var timer = null
+    function left() {
+      if(ishmove) return;
+      ishmove = true
+      gameIns.SendMessage("Boat_1", "MoveLeft")
+      if(timer){
+        clearTimeout(timer)
+      }
+      timer =  setTimeout(() => {
+        ishmove = false
+        timer = null
+        gameIns.SendMessage("Boat_1", "MoveZero")
+      }, 200);
+    }
+
+    function right() {
+      if(ishmove) return;
+      ishmove = true
+      gameIns.SendMessage("Boat_1", "Moveright")
+      if(timer){
+        clearTimeout(timer)
+      }
+      timer =  setTimeout(() => {
+        ishmove = false
+        timer = null
+        gameIns.SendMessage("Boat_1", "MoveZero")
+      }, 200);
+      
+    }
+
+
+    document.onkeydown = function (e) {
+
+      var keyNum = window.event ? e.keyCode : e.which;
+      if (keyNum == 39) {
+        right();
+      }else if(keyNum == 37){
+        left();
+      }
+    }
+
+  </script>
+</body>
+
+</html>
